@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
 import { getAuth , createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc,  updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
-import { getStorage, ref,  uploadBytes, uploadBytesResumable, getDownloadURL, deleteObject  } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js";
+import { getFirestore, doc, setDoc, getDoc,  updateDoc, query, where, getDocs, collection, addDoc, onSnapshot, deleteDoc, } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL,} from "https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDCoP7JIi6z2kTBDSvQUBsDekeo7zeJrWM",
@@ -19,12 +19,15 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage();
 const userProfile = document.getElementById('user-profile');
+const ids = [];
+let total = 0
 
 
 const getUserData = async (uid) => {
   try{
     const docRef = doc(db, "users", uid); 
     const docSnap = await getDoc(docRef);
+    console.log(docSnap.exists())
     if (docSnap.exists()) {  
     let fullName = document.getElementById('signup-name');
     let signupEmail = document.getElementById('signup-email');
@@ -38,7 +41,7 @@ const getUserData = async (uid) => {
       }
     } else{
         userName.innerHTML = docSnap.data().fullName;
-        userEmail.innerHTML = docSnap.data().signupEmail;
+        userEmail.innerHTML = docSnap.data().signupEmail; 
         if(docSnap.data().picture){
           userProfile.src = docSnap.data().picture; 
           console.log(docSnap.data()) 
@@ -57,9 +60,8 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     let uid = localStorage.getItem('uid');
     getUserData(user.uid);
-    getAllUsers(user.email)
     if (user  && uid) {
-      if (location.pathname !== '/profile.html' && location.pathname !== '/chat.html' ) {
+      if (location.pathname !== '/profile.html' && location.pathname !== '/dashboard.html' ) {
          location.href = 'profile.html'
       }
     }
@@ -69,22 +71,6 @@ onAuthStateChanged(auth, (user) => {
     }
   }
 });
-
-
-const getAllUsers = async (email) => {
-  try {
-    const q = query(collection(db, "users"), where("email", "!=", email));
-    const querySnapshot = await getDocs(q);
-    console.log(query(collection(db, 'users')))
-    console.log(where('email', '!=' , email))
-
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-    });
-  } catch (error) {
-    console.log("Error fetching users:", error);
-  }
-}
 
 
 
@@ -99,6 +85,7 @@ signupbtn && signupbtn.addEventListener('click', function(event) {
   .then( async (userCredential) => {
     try{
       const user = userCredential.user;
+      console.log(user)
       await setDoc(doc(db, "users", user.uid), {
         fullName: fullName.value,
         signupEmail: signupEmail.value,
@@ -137,6 +124,7 @@ loginbtn && loginbtn.addEventListener('click', function(event) {
   signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
     .then((userCredential) => {
       const user = userCredential.user;
+      console.log(user)
       localStorage.setItem("uid", user.uid);
       loginEmail.value = "";
       loginPassword.value = "";
@@ -216,9 +204,15 @@ fileInput && fileInput.addEventListener('change', () =>{
 } 
 )
 
+let fullName = document.getElementById('signup-name');
+let signupEmail = document.getElementById('signup-email');
 let updateProfileBtn = document.getElementById('update-profile-btn');
 
 updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
+  fullName.disabled = false;
+  signupEmail.disabled = false;
+  updateProfileBtn.innerHTML = 'Update Profile';
+  console.log(updateProfileBtn);
   try{  
     let uid = localStorage.getItem('uid')
     let fullName = document.getElementById('signup-name');
@@ -237,6 +231,7 @@ updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
         icon: 'success!',
         title: 'Profile updated successfully.',
       });
+      updateProfileBtn.innerHTML = 'Edit Profile';
     } else {
       console.log("Document does not exist!");
     }
@@ -244,3 +239,117 @@ updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
     console.log(error)
   }
 })
+
+
+
+let createBlog = document.getElementById('create-blog');
+let creatingBlog = document.getElementById('creating-blog');
+
+createBlog && createBlog.addEventListener('click', () => {
+  creatingBlog.style.display = 'block';
+})
+
+
+
+const getBlogs = () => {
+  onSnapshot(collection(db, "blogs"), (data) => {
+      data.docChanges().forEach((title) => {
+          ids.push(title.doc.id)
+          if (title.type === 'removed') {
+              let progress = document.getElementById("progress-width");
+              if (Math.round(100 / total) < 100) {
+                  total--;
+                  progress.style.width = Math.round(100 / total) + "%"
+                  progress.innerText = Math.round(100 / total) + "%"
+              }
+              let dtodo = document.getElementById(title.doc.id);
+              if (dtodo) {
+                  dtodo.remove()
+              }
+          } else if (title.type === 'added') {
+              total++;
+              let list = document.getElementById("list");
+              creatingBlog.style.display = 'none';
+              list.innerHTML += `
+              <div class="card w-75 mb-3">
+                <div class="user-info">
+                  <div>
+                  <img id="user-profile" src="images/chat-users.png" class="chat-users" width="34" height="34" alt="" />
+                  </div>
+                   <div>
+                   <p class="name" id="userName"></p> <p class="margin name" id="userEmail"></p>
+                   </div>
+                </div>
+               <div id='${title.doc.id}'">
+                 <h5 class="card-title">'${title.doc.data().title}</h5>
+                 <p class="card-text">'${title.doc.data().blog}'</p>
+                 <p class="card-text time">'${title.doc.data().time}'</p>
+                 <a href="#" class="btn btn-warning" onclick='delBlog("${title.doc.id}")'>Delete</a>
+                 <a href="#" class="btn btn-warning" onclick='editBlog(this,"${title.doc.id}")'>Edit</a>
+               </div>
+              </div>
+              `
+          }
+      })
+  });
+}
+
+getBlogs()
+
+
+const addBlog = async () => {
+  try {
+      let title = document.getElementById("title");
+      let blog = document.getElementById('blog');
+      creatingBlog.display = 'none';
+      let date = new Date()
+      const docRef = await addDoc(collection(db, "blogs"), {
+          title: title.value,
+          blog: blog.value,
+          time: date.toLocaleString()
+      });
+      title.value = ""
+      blog.value = ''
+  } catch (err) {
+      console.log(err)
+  }
+
+}
+
+async function delBlog(id) {
+
+  await deleteDoc(doc(db, "blogs", id));
+  console.log("Todo deleted")
+}
+
+
+var edit = false;
+async function editBlog(e, id) {
+  if (edit) {
+    let updatedTitle = e.parentNode.querySelector(".card-title").textContent;
+    let updatedBlog = e.parentNode.querySelector(".card-text").textContent;
+    await updateDoc(doc(db, "blogs", id), {
+      title: updatedTitle,
+      blog: updatedBlog
+    });
+    e.parentNode.querySelector(".card-title").contentEditable = false;
+    e.parentNode.querySelector(".card-text").contentEditable = false;
+    e.innerHTML = "Edit";
+    edit = false;
+  } else {
+    e.parentNode.querySelector(".card-title").contentEditable = true;
+    e.parentNode.querySelector(".card-text").contentEditable = true;
+    e.parentNode.querySelector(".card-title").focus();
+    e.parentNode.querySelector(".card-text").focus();
+    e.innerHTML = "Update";
+    edit = true;
+  }
+}
+
+
+window.addBlog = addBlog;
+window.delBlog = delBlog;
+window.editBlog = editBlog;
+
+
+
