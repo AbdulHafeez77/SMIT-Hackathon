@@ -15,7 +15,7 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
             aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon down"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto me-auto mb-2 mb-lg-0"> </ul>
@@ -39,14 +39,18 @@
     <div class="row mt-5">
       <div class="col-12 col-sm-12 col-md-12 col-lg-12">
         <div style="display: none;" id="creating-blog" class="card w-75 mb-3">
-          <div class="card-body">           
+          <div class="card-body">
             <div class="mb-3">
-              <label for="title" class="form-label">Title</label>
-              <input id="title" type="name" class="form-control blog" id="exampleFormControlInput1" placeholder="Title of your Blog">
+              <label for="name" class="form-label">Aurther Name</label>
+              <input id="name" type="name" class="form-control blog"  placeholder="Write Your Full Name">
+            </div>           
+            <div class="mb-3">
+              <label for="title" class="form-label">Title of Blog</label>
+              <input id="title" type="name" class="form-control blog"  placeholder="Title of your Blog">
             </div>
             <div class="mb-3">
               <label for="blog" class="form-label">Write Your Blog</label>
-              <textarea id="blog" class="form-control blog" id="exampleFormControlTextarea1" rows="3"></textarea>
+              <textarea id="blog" class="form-control blog"  rows="3"></textarea>
             </div>
             <a onclick="addBlog()" type="submit" class="mb-3 mt-2 btn btn-warning my-btn">Add Blog</a>
           </div>

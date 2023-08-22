@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
 import { getAuth , createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc,  updateDoc, collection, addDoc, onSnapshot, deleteDoc, } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc,  updateDoc, collection, addDoc, onSnapshot, deleteDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL,} from "https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js";
 
 
@@ -44,6 +44,7 @@ onAuthStateChanged(auth, (user) => {
     } 
   } 
 });
+
 
 
 let signupbtn = document.getElementById('signup-btn');
@@ -155,10 +156,9 @@ const getUserData = async (uid) => {
         userProfile.src = docSnap.data().picture;  
       } 
     } else if(location.pathname === '/index.html'){
-      userName.innerHTML = docSnap.data().fullName;
-      userEmail.innerHTML = docSnap.data().signupEmail;
-    // fullName.value = docSnap.data().fullName;
-    // signupEmail.value = docSnap.data().signupEmail;
+      console.log(userEmail)
+      // userName.innerHTML = docSnap.data().fullName;
+      // userEmail.innerHTML = docSnap.data().signupEmail;
       if (docSnap.data().picture) {
         userProfile.src = docSnap.data().picture; 
       } 
@@ -233,14 +233,25 @@ updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
 })
 
 
+const q = query(collection(db, "users"));
+
+const querySnapshot = await getDocs(q);
+querySnapshot.forEach((doc) => {
+  // doc.data() is never undefined for query doc snapshots
+  console.log(doc.id, " => ", doc.data());
+});
+
+
 let creatingBlog = document.getElementById('creating-blog');
 let greetingTime = document.getElementById('time');
+console.log(greetingTime)
 let time = new Date().getHours();
-if(time > 12){
+console.log(time)
+if( time < 12){
    greetingTime.innerHTML = 'Good Morning Readers';
-}else if(time <= 12){
+}else if(time >= 12){
   greetingTime.innerHTML = 'Good AfterNoon Readers';
-  if(time <= 18){
+  if(time >= 18){
     greetingTime.innerHTML = 'Good Evening Readers'
   }
 } 
@@ -268,12 +279,12 @@ const getBlogs = () => {
               <div class="card w-75 mb-3">
                 <div class="user-info">
                   <div>
-                  <img id="user-profile" src="images/chat-users.png" class="chat-users" width="34" height="34" alt="" />
+                   <img id="user-profile" src="images/chat-users.png" class="chat-users" width="34" height="34" alt="" />
                   </div>
-                   <div>
-                    <p class="name font-weight-bold" id="userName"></p>
-                    <p class="margin name" id="userEmail"></p>
-                   </div>
+                  <div>
+                    <p class="name font-weight-bold" id="userName"> </p>
+                    <p class="margin name" id="userEmail"> </p>
+                  </div>
                 </div>
                <div id='${title.doc.id}'>
                  <h5 class="card-title">${title.doc.data().title}</h5>
