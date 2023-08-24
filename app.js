@@ -1,50 +1,62 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-import { getAuth , createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc,  updateDoc, collection, addDoc, onSnapshot, deleteDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL,} from "https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js";
+import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "/firebase.js";
+import { db, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, deleteDoc, query, where, getDocs } from "/firebase.js";
+import { storage, ref, uploadBytesResumable, getDownloadURL,} from "/firebase.js";
 
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDCoP7JIi6z2kTBDSvQUBsDekeo7zeJrWM",
-  authDomain: "todo-app-26721.firebaseapp.com",
-  databaseURL: "https://todo-app-26721-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "todo-app-26721",
-  storageBucket: "todo-app-26721.appspot.com",
-  messagingSenderId: "913827042033",
-  appId: "1:913827042033:web:c29d5e0e22e1d04eae8f50",
-  measurementId: "G-M0C7Q8L2ZE"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app); 
-const db = getFirestore(app);
-const storage = getStorage();
 const userProfile = document.getElementById('user-profile');
+let navProfile = document.getElementById('nav-profile');
 const ids = [];
 
 
-
-let navProfile = document.getElementById('nav-profile');
-let loginNav = document.getElementById("login");
-let signNav = document.getElementById('sign');
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
     let uid = localStorage.getItem('uid')
     getUserData(user.uid);
-    if(user && location.pathname == "/index.html"){
-      navProfile.style.display = 'block';
-      loginNav.innerHTML = "Log out";
-      loginNav.id = 'logout-btn';
-      signNav.innerHTML = 'Create a Blog';
-      signNav.href = '#';
-      signNav.id = 'create-blog';
-      console.log(signNav);
-      console.log(loginNav)
-    } 
+    if (user && uid) {
+      if (location.pathname !== '/profile.html' && location.pathname !== '/index.html' && location.pathname !== '/blogs.html') {
+        location.href = "profile.html"
+      }
+    } else if (location.pathname == "/index.html" && location.pathname == '/blogs.html'){
+        navProfile.style.display = 'block';
+    } else {
+      if (location.pathname !== '/login.html' && location.pathname !== "signup.html") {
+        location.href = "login.html"
+      }
+    }
   } 
 });
 
+
+const getUserData = async (uid) => {
+  const docRef = doc(db, "users", uid); 
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {  
+    let fullName = document.getElementById('signup-name');
+    let signupEmail = document.getElementById('signup-email');
+    let userName = document.getElementById('userName');
+    let userEmail = document.getElementById('userEmail');
+    if(location.pathname === '/profile.html'){
+      fullName.value = docSnap.data().fullName;
+      signupEmail.value = docSnap.data().signupEmail;
+      if(docSnap.data().picture){
+        userProfile.src = docSnap.data().picture;  
+      } 
+    } else if(location.pathname === '/index.html'){
+      userName.innerHTML = docSnap.data().fullName;
+      userEmail.innerHTML = docSnap.data().signupEmail;
+      console.log(userProfile)
+      if (docSnap.data().picture) {
+        userProfile.src = docSnap.data().picture; 
+      } 
+    } else {
+      if (docSnap.data().picture) {
+        userProfile.src = docSnap.data().picture; 
+      } 
+    } 
+  } else {
+    console.log("No such document!");
+  }
+}
 
 
 let signupbtn = document.getElementById('signup-btn');
@@ -76,7 +88,7 @@ signupbtn && signupbtn.addEventListener('click', function(event) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Account Already Exist!',
+        text: errorMessage,
         footer: '<a href="index.html">log in</a>'
       })
     }
@@ -118,6 +130,13 @@ loginbtn && loginbtn.addEventListener('click', function(event) {
           text: 'User Not Found!',
           footer: '<a href="">Forget Password?</a>'
         })
+      }else{
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: errorMessage,
+          footer: '<a href="">Forget Password?</a>'
+        })
       }
       loginEmail.value = "";
       loginPassword.value = "";
@@ -131,42 +150,12 @@ logoutBtn && logoutBtn.addEventListener('click', (event) => {
   event.preventDefault();
   signOut(auth).then(() => {
     localStorage.clear();
-    // location.href = 'index.html';
+    location.href = 'login.html';
     console.log('gaya')
   }).catch((error) => {
     console.log(error);
   });
 })
-
-
-
-
-const getUserData = async (uid) => {
-  const docRef = doc(db, "users", uid); 
-  const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) {  
-    let fullName = document.getElementById('signup-name');
-    let signupEmail = document.getElementById('signup-email');
-    let userName = document.getElementById('userName');
-    let userEmail = document.getElementById('userEmail');
-    if(location.pathname === '/profile.html'){
-      fullName.value = docSnap.data().fullName;
-      signupEmail.value = docSnap.data().signupEmail;
-      if(docSnap.data().picture){
-        userProfile.src = docSnap.data().picture;  
-      } 
-    } else if(location.pathname === '/index.html'){
-      console.log(userEmail)
-      // userName.innerHTML = docSnap.data().fullName;
-      // userEmail.innerHTML = docSnap.data().signupEmail;
-      if (docSnap.data().picture) {
-        userProfile.src = docSnap.data().picture; 
-      } 
-    }  
-  } else {
-    console.log("No such document!");
-  }
-}
 
 
 const uploadFile = (file) => {
@@ -199,21 +188,21 @@ const uploadFile = (file) => {
   })
 }
 
-const fileInput = document.getElementById('file-input');
 
+const fileInput = document.getElementById('file-input');
 fileInput && fileInput.addEventListener('change', () =>{
   console.log(fileInput.files[0])
   userProfile.src = URL.createObjectURL(fileInput.files[0])
 } 
 )
 
-let updateProfileBtn = document.getElementById('update-profile-btn');
 
+let updateProfileBtn = document.getElementById('update-profile-btn');
 updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
   let uid = localStorage.getItem('uid')
   let fullName = document.getElementById('signup-name');
   let signupEmail = document.getElementById('signup-email');
-  let imageURl = await uploadFile(fileInput.files[0])
+  let imageUrl = await uploadFile(fileInput.files[0])
   console.log(fileInput.files[0])
   const userRef = doc(db, "users", uid);
   const docSnap = await getDoc(userRef);
@@ -221,7 +210,7 @@ updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
     await updateDoc(userRef, {
       fullName: fullName.value,
       signupEmail: signupEmail.value,
-      picture: imageURl,
+      picture: imageUrl,
     });
     Swal.fire({
       icon: 'success!',
@@ -233,35 +222,26 @@ updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
 })
 
 
-const q = query(collection(db, "users"));
+// const q = query(collection(db, "users"));
+// const querySnapshot = await getDocs(q);
+// querySnapshot.forEach((doc) => {
+//   // doc.data() is never undefined for query doc snapshots
+//   console.log(doc.id, " => ", doc.data());
+// });
 
-const querySnapshot = await getDocs(q);
-querySnapshot.forEach((doc) => {
-  // doc.data() is never undefined for query doc snapshots
-  console.log(doc.id, " => ", doc.data());
-});
 
-
-let creatingBlog = document.getElementById('creating-blog');
 let greetingTime = document.getElementById('time');
-console.log(greetingTime)
 let time = new Date().getHours();
-console.log(time)
-if( time < 12){
-   greetingTime.innerHTML = 'Good Morning Readers';
-}else if(time >= 12){
-  greetingTime.innerHTML = 'Good AfterNoon Readers';
-  if(time >= 18){
+
+if(location.pathname == '/index.html' || location.pathname == '/blogs.html'){
+  if (time >= 5 && time < 12) {
+    greetingTime.innerHTML = 'Good Morning Readers';
+  } else if (time >= 12 && time < 18) {
+    greetingTime.innerHTML = 'Good AfterNoon Readers';
+  } else {
     greetingTime.innerHTML = 'Good Evening Readers'
   }
-} 
-
-
-signNav && signNav.addEventListener('click', (event) => {
-  event.preventDefault();
-  creatingBlog.style.display = 'block';
-  console.log("chala");
-})
+}
 
 
 const getBlogs = () => {
@@ -290,17 +270,17 @@ const getBlogs = () => {
                  <h5 class="card-title">${title.doc.data().title}</h5>
                  <p class="card-text">${title.doc.data().blog}</p>
                  <p class="card-text time">${title.doc.data().time}</p>
-                 <a href="#" class="btn btn-warning" onclick='delBlog("${title.doc.id}")'>Delete</a>
-                 <a href="#" class="btn btn-warning" onclick='editBlog(this,"${title.doc.id}")'>Edit</a>
+                 <div class="right">  
+                   <a href="#" class="btn button" onclick='delBlog("${title.doc.id}")'>Delete</a>
+                   <a href="#" class="btn button" onclick='editBlog(this,"${title.doc.id}")'>Edit</a>
+                 </div>
                </div>
               </div>
               `
-              creatingBlog.style.display = 'none';
           }
       })
   });
 }
-
 getBlogs()
 
 
@@ -308,7 +288,6 @@ const addBlog = async () => {
   try {
       let title = document.getElementById("title");
       let blog = document.getElementById('blog');
-      creatingBlog.display = 'none';
       let date = new Date()
       const docRef = await addDoc(collection(db, "blogs"), {
           title: title.value,
@@ -322,6 +301,7 @@ const addBlog = async () => {
   }
 
 }
+
 
 async function delBlog(id) {
   await deleteDoc(doc(db, "blogs", id));

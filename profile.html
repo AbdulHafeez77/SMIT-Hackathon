@@ -12,8 +12,8 @@
 <body>
     <nav class="navbar navbar-expand-lg my-header">
         <div class="container nav-container">
-            <h5 class="my-heading">Personal Blogging App </h5>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            <h4 class="my-heading">Personal Blog<span class="span">ging App</span></h4>
+            <button class="navbar-toggler span" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon down"></span>
@@ -33,7 +33,7 @@
                 <div class="card mt-5">
                     <div class="card-body">
                         <div class="profile-pic">
-                           <img id="user-profile" src="images/user-icon.jpg" alt="" />  
+                           <img id="user-profile" src="images/blank-user-icon-image.jpg" alt="" />  
                             <label class="camera-icon" for="file-input">
                                 <i class="bi bi-camera"></i>
                             </label> 
@@ -43,22 +43,23 @@
                             <div class="mb-2">
                                 <label for="signup-name" class="form-label">Name</label>
                                 <input required placeholder="Update your name" type="name" class="form-control" id="signup-name"
-                                    aria-describedby="emailHelp">
+                                    aria-describedby="emailHelp" />
                             </div>
                             <div class="mb-2">
                                 <label for="signup-email" class="form-label">Email</label>
-                                <input required value="" placeholder="Update your email" type="email" class="form-control" id="signup-email">
+                                <input disabled  required value="" placeholder="Update your email" type="email" class="form-control" id="signup-email">
                             </div>
-                            <a id="update-profile-btn" type="submit" class="mb-3 mt-2 btn btn-warning my-btn">Update Profile</a>
-                            <a id="chat-btn" class="btn btn-warning my-btn" href="index.html">Dashboard</a>
+                            <div class="instruction"><li>You can not update the email.</li><div>
+                            <a id="update-profile-btn" type="submit" class="mb-3 mt-2 btn button my-btn">Update Profile</a>
+                            <a id="chat-btn" class="btn button my-btn" href="index.html">Dashboard</a>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div></div></div> 
     <div class="copyright">
-        <span>Copyright © 2023 by Personal Blogging App</span>
+        <span><span class="span">Copyright © 2023 by </span>Personal Blogging App</span>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
     <script type="module" src="app.js"></script>
