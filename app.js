@@ -13,14 +13,14 @@ onAuthStateChanged(auth, (user) => {
     let uid = localStorage.getItem('uid')
     getUserData(user.uid);
     if (user && uid) {
-      if (location.pathname !== '/profile.html' && location.pathname !== '/index.html' && location.pathname !== '/blogs.html') {
+      if (location.pathname !== '/profile.html' && location.pathname !== '/dashboard.html' && location.pathname !== '/blogs.html') {
         location.href = "profile.html"
       }
-    } else if (location.pathname == "/index.html" && location.pathname == '/blogs.html'){
+    } else if (location.pathname == "/dashboard.html" && location.pathname == '/blogs.html'){
         navProfile.style.display = 'block';
     } else {
-      if (location.pathname !== '/login.html' && location.pathname !== "signup.html") {
-        location.href = "login.html"
+      if (location.pathname !== '/index.html' && location.pathname !== "signup.html") {
+        location.href = "index.html"
       }
     }
   } 
