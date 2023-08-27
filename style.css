@@ -10,15 +10,20 @@
    font-family: "my-font";
   }
   
+  body{
+    background-color: #F5F5F5 !important; 
+  }
+
+
   .logo{
     border-radius: 50%;
   }
   
-  
+
   .my-nav{
     font-size: 20px !important;
-    width: 120px;
-    text-align: center;
+    width: 120px !important;
+    text-align: center !important;
   }
   
   .card {
@@ -100,10 +105,10 @@
   
   
   .name{
-    margin: 0% !important;
-    font-size: 15px !important; 
-    margin-left: 5px !important;
-    margin-bottom: 5px !important;
+    margin-top: 5px !important;
+    margin-left: 6px !important;
+    display: flex !important;
+    align-items: center !important;
   }
   
   
@@ -191,7 +196,7 @@
 
   .instruction{
     font-size: 13px;
-    color: #505050;
+    color: #65676b;
   }
   
   .user-info{
@@ -213,26 +218,35 @@
     margin: 10px !important;
   }
   
-
+   .chat-users{
+    border-radius: 50% !important;
+   }
   
   .nav-container{
     background-color: #441c78 !important;
   }
   
-  
+  .card{
+    margin: 0 auto !important;
+  }
+
+
+
   .greet{
     width: 100%;
-    height: 70px;
-    background-color: #F0F0F0;
+    height: 85px;
     display: flex;
     justify-content: center;
+    background-color:	#E8E8E8;
+    background-position: center;
+    background-size: cover;
   }
   
   
   .time{
     font-size: 13px;
     color: #441c78;
-    font-weight: 600;
+    font-weight: bolder !important;
   }
   
   .dashboard{
@@ -246,6 +260,12 @@
   
   .auth{
     color: #441c78;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
   }
- 
 
+
+ .password-reset{
+  display: none;
+ }
