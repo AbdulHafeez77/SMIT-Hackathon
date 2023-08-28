@@ -85,7 +85,7 @@ const getAllBlogs = async (uid) => {
     querySnapshot.forEach((doc) => {
 
       Allbloglist.innerHTML += `
-      <div class="card my-card w-75 mb-3">
+      <div class="card my-card w-70 mb-3">
         <div class="user-info">
           <div>
            <img id="user-profile" src="${doc.data().user.picture ? doc.data().user.picture : "images/chat-users.png"}" class="chat-users" width="40" height="40" alt="" />
@@ -436,7 +436,7 @@ const getUserBlogs =  async() => {
     const userDetails = document.getElementById('userDetails');
     const userRef = doc(db, "users", user); 
     const userData = await getDoc(userRef);
-    userDetails.innerHTML = `<div class="card profile-card mt-4" style="width: 20rem;">
+    userDetails.innerHTML = `<div class="card profile-card w-70 mt-4">
                                <img height="auto" src="${userData.data().picture ? userData.data().picture : "images/user-icon.jpg"}" 
                                class="card-img-top card-pic" alt="profile">
                                <h5 class="card-title my-card mt-3 color2">${userData.data().fullName}</h5>
