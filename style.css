@@ -18,13 +18,14 @@
   .logo{
     border-radius: 50%;
   }
-  
 
-  .my-nav{
-    font-size: 20px !important;
-    width: 120px !important;
-    text-align: center !important;
-  }
+
+  .no-fade-modal.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translate(0) !important;
+}
+
   
   .card {
     box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
@@ -39,10 +40,16 @@
   .my-btn {
     width: 100% !important;
   }
+
+  .my-btn :active{
+    opacity: 0.5;
+  }
   
   
   .my-heading{
     color: #fff !important;
+    margin-left: 8px;
+    margin-top: 8px;
   }
   
   .my-header {
@@ -52,8 +59,6 @@
   
  .button{
     background-color: #441c78 !important;
-    /* color: #F0F0F0 !important; */
-    /* color: #FFFF00 !important; */
     color: #FFD700 !important;
  }
 
@@ -61,18 +66,9 @@
   color: #fcc107 !important;
  }
 
-  
-  .my-card {
-    height: 160px !important;
-    cursor: pointer;
-  }
-  
-  
-  .nav-item {
-    margin-left: 10px;
-    margin-right: 10px;
-    color: #000 !important;
-  }
+ .button :active{
+   opacity: 0.5;
+ }
   
   .span{
     color: #fcc107 !important;
@@ -226,9 +222,6 @@
     background-color: #441c78 !important;
   }
   
-  .card{
-    margin: 0 auto !important;
-  }
 
 
 
@@ -251,6 +244,7 @@
   
   .dashboard{
     height: 100%;
+    margin: 0% auto !important;
   }
   
   .down{
@@ -266,6 +260,62 @@
   }
 
 
+  .color{
+    color: #441c78 !important;
+  }
+
+  .my-card{
+    margin: 0% auto !important;
+  }
+
+
+  .headings{
+    display: flex;
+    justify-content: space-around;
+  }
+
+
+ .card-pic{
+  background-position: center;
+  background-size: cover;
+  background-color: #fff;
+  border: 1.5px solid #fcc107;
+  border-radius: 8px;
+ }
+
+
+ .color2{
+  color: #fcc303 !important;
+ }
+
+
  .password-reset{
   display: none;
+ }
+
+
+ .blog-heading{
+  margin: 0 auto !important; 
+  color: #441c78 !important;
+ }
+
+
+ .users-heading{
+  display: flex;
+  justify-content: center;
+ }
+
+
+ .view-blogs{
+  display: flex;
+  justify-content: right;
+  cursor: pointer;
+  font-size: 15px !important;
+  text-decoration: none !important;
+ }
+
+
+ .profile-card{
+  border-radius: 8px !important;
+  background-color: #441c78 !important;
  }

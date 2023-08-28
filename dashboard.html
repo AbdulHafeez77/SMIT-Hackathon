@@ -11,7 +11,8 @@
 <body>
   <nav class="navbar navbar-expand-lg my-header">
     <div class="container nav-container">
-        <h4 class="my-heading">Personal Blog<span class="span">ging App</span></h4>
+        <img class="logo" alt="logo" width="40" src="images/download-fotor-202308282259.png" />
+        <h4 class="my-heading"> Personal Blog<span class="span">ging App</span></h4>
         <button class="navbar-toggler span" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -26,7 +27,7 @@
             </div>
             <div> 
               <a class="btn btn-outline-warning mb-3 mt-3" href="blogs.html">Blogs</a>
-              <a id="logout-btn" class="btn btn-outline-warning mb-3 mt-3" href="index.html">Log out</a>
+              <a id="logout-btn" class="btn btn-outline-warning mb-3 mt-3" href="login.html">Log out</a>
             </div>
         </div>
     </div>
@@ -36,16 +37,17 @@
   </div> 
   <br />
   <div id="dashboard" class="container dashboard">
-    <div class="row mt-5">
+    <div class="row mt-4">
       <div class="col-12 col-sm-12 col-md-12 col-lg-12">
-        <div id="creating-blog" class="card w-75 mb-5">
+        <div id="creating-blog" class="card my-card w-75 mb-5">
+        <h4 class="blog-heading justify-content-center">Create Your Blog</h4>
           <div class="card-body">
             <div class="mb-3">
               <label for="title" class="form-label">Title of Blog</label>
               <input id="title" type="name" class="form-control blog"  placeholder="Title of your Blog">
             </div>
             <div class="mb-3">
-              <label for="blog" class="form-label">Write Your Blog</label>
+              <label for="blog" class="form-label">Description of Blog</label>
               <textarea id="blog" class="form-control blog" placeholder="What's on your mind..."  rows="4"></textarea>
             </div>
             <a id="addBlog" type="submit" class="mb-3 mt-2 btn button my-btn">Add Blog</a>
@@ -58,11 +60,36 @@
       </div>
     </div>      
   </div>
+  <div class="modal fade no-fade-modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 color" id="exampleModalLabel">Update Your Blog</h1>
+          <button id="closeBTn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="update-title" class="col-form-label">Title of Blog:</label>
+              <input type="text" class="form-control" id="update-title">
+            </div>
+            <div class="mb-3">
+              <label for="update-blog" class="col-form-label">Description of Blog:</label>
+              <textarea class="form-control" rows="5" id="update-blog"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn button" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn button" id="updateBlog-btn">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <br />
   <div class="copyright mt-5">
-     <span><span class="span">Copyright © 2023 by </span>Personal Blogging App</span>
+     <span><span class="span">Copyright © 2023 by </span><img width="19" src="images/download-fotor-202308282259.png" class="logo" alt="logo" /> Personal Blogging App</span>
   </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
     <script type="module" src="app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
