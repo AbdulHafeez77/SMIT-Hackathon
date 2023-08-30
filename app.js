@@ -5,11 +5,12 @@ import { storage, ref, uploadBytesResumable, getDownloadURL,} from "/firebase.js
 
 const userProfile = document.getElementById('user-profile');
 let navProfile = document.getElementById('nav-profile');
-const ids = [];
+let loader = document.getElementById('loader');
 
 
 
 const getUserData = async (uid) => {
+  loader.style.display = "flex";
   const docRef = doc(db, "users", uid); 
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {  
@@ -35,8 +36,10 @@ const getUserData = async (uid) => {
         userProfile.src = docSnap.data().picture; 
       } 
     } 
+  loader.style.display = "none";
   } else {
     console.log("No such document!");
+    loader.style.display = "none";
   }
 }
 
@@ -46,8 +49,10 @@ const getCurrentBlogs = async (uid) => {
     const Bloglist = document.getElementById("Bloglist");
     Bloglist.innerHTML = '';
     const q = query(collection(db, "blogs"), where("uid", "==", uid));
+    loader.style.display = "flex";
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
+      console.log(doc.id,doc.data().title,doc.data().blog)
       Bloglist.innerHTML += `
       <div class="card w-70 mb-3">
         <div class="user-info">
@@ -63,29 +68,69 @@ const getCurrentBlogs = async (uid) => {
          <p class="card-text">${doc.data().blog}</p>
          <p class="card-text time">${doc.data().time.toDate().toDateString()}</p>
          <div class="right">  
-           <a href="#" class="btn button" onclick='delBlog("${doc.id}")'>Delete</a>
-           <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" 
-           class="btn button" onclick='editBlog("${doc.id}","${doc.data().title}","${doc.data().blog}")'>Edit</a>
+           <a type="button" class="btn button" onclick='delBlog("${doc.id}")'>Delete</a>
+           <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" 
+           class="btn button" onclick='editBlog("${doc.id}","${doc.data().title}","${doc.data().blog}")'>Edit</a>        
          </div>
        </div>
-      </div>
-      `
+      </div> `
     });
+    loader.style.display = "none";
   } catch (error) {
     console.log(error);
+    loader.style.display = "none";
   }
 }
+
+
+let updateId = "";
+let updatedTitle = document.getElementById('update-title');
+let updatedBlog = document.getElementById('update-blog');
+const editBlog = (id, title, blog ) => {
+  updateId = id;
+  updatedTitle.value = title;
+  updatedBlog.value = blog;
+}
+
+
+  if(location.pathname === "/dashboard.html"){
+    let updateModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+    const updateBLogBtn = document.getElementById('updateBlog-btn');
+    updateBLogBtn && updateBLogBtn.addEventListener('click', async (event) => {
+      event.preventDefault();
+      try{
+        loader.style.display = "flex";
+        console.log(updateId,updatedTitle,updatedBlog )
+        const currentUser = auth.currentUser;
+        await updateDoc(doc(db, "blogs", updateId), {
+          title: updatedTitle.value,
+          blog: updatedBlog.value
+        });
+        updateId = '';  
+        updateModal.hide();
+        loader.style.display = "none";
+        getCurrentBlogs(currentUser.uid)
+        Swal.fire({
+          icon: 'Success!',
+          title: 'Blog Edited Successfully.',
+        });
+      }catch(error){
+        console.log(error)
+      }
+    });
+  }
+
 
 
 const getAllBlogs = async (uid) => {
   try {
     const Allbloglist = document.getElementById("allBlogList");
+    loader.style.display = "flex";
     const q = query(collection(db, "blogs"), where("uid", "!=", uid));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-
       Allbloglist.innerHTML += `
-      <div class="card my-card w-70 mb-3">
+      <div class="card w-70 mb-3">
         <div class="user-info">
           <div>
            <img id="user-profile" src="${doc.data().user.picture ? doc.data().user.picture : "images/chat-users.png"}" class="chat-users" width="40" height="40" alt="" />
@@ -103,8 +148,10 @@ const getAllBlogs = async (uid) => {
       </div>
       `
     });
+    loader.style.display = "none";
   } catch (error) {
     console.log(error);
+    loader.style.display = "none";
   }
 }
 
@@ -137,6 +184,7 @@ onAuthStateChanged(auth, (user) => {
 let signupbtn = document.getElementById('signup-btn');
 signupbtn && signupbtn.addEventListener('click', function(event) {
   event.preventDefault();
+  loader.style.display = "flex";
   let fullName = document.getElementById('signup-name');
   let signupEmail = document.getElementById('signup-email');
   let signupPassword = document.getElementById('signup-pass');
@@ -150,12 +198,15 @@ signupbtn && signupbtn.addEventListener('click', function(event) {
         signupPassword: signupPassword.value
       });
       localStorage.setItem("uid", user.uid);
+      loader.style.display = "none";
       location.href = 'profile.html';
     }catch(error){
       console.log(error)
+      loader.style.display = "none";
     }
   })
   .catch((error) => {
+    loader.style.display = "none";
     const errorCode = error.code;
     const errorMessage = error.message;
     if(errorMessage == "Firebase: Error (auth/email-already-in-use)." ){
@@ -175,18 +226,20 @@ signupbtn && signupbtn.addEventListener('click', function(event) {
 let loginbtn = document.getElementById('login-btn');
 loginbtn && loginbtn.addEventListener('click', function(event) {
   event.preventDefault();
+  loader.style.display = "flex";
   let loginEmail = document.getElementById('login-email');
   let loginPassword = document.getElementById('login-pass');
-
   signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
     .then((userCredential) => {
       const user = userCredential.user;
       localStorage.setItem("uid", user.uid);
       loginEmail.value = "";
       loginPassword.value = "";
+      loader.style.display = "none";
       location.href = 'profile.html'
     })
     .catch((error) => {
+      loader.style.display = "none";
       const errorCode = error.code;
       const errorMessage = error.message;
       if(errorMessage == "Firebase: Error (auth/wrong-password)." ){
@@ -217,11 +270,14 @@ loginbtn && loginbtn.addEventListener('click', function(event) {
 let logoutBtn = document.getElementById('logout-btn');
 logoutBtn && logoutBtn.addEventListener('click', (event) => {
   event.preventDefault();
+  loader.style.display = "flex";
   signOut(auth).then(() => {
     localStorage.clear();
+    loader.style.display = "none";
     location.href = 'index.html';
 b  }).catch((error) => {
     console.log(error);
+    loader.style.display = "none";
   });
 })
 
@@ -265,6 +321,7 @@ fileInput && fileInput.addEventListener('change', () =>{
 
 
 const updateUserPassword = (oldP, newP) =>{
+  loader.style.display = "flex";
   new Promise( (resolve, reject) =>{
     const currentUser = auth.currentUser;
     const credential = EmailAuthProvider.credential(
@@ -274,12 +331,14 @@ const updateUserPassword = (oldP, newP) =>{
     reauthenticateWithCredential(currentUser, credential).then((res) => {
       updatePassword(currentUser, newP).then(() => {
         resolve(res);
+        loader.style.display = "none";
         Swal.fire({
           icon: 'Success!',
           title: 'Password updated successfully.',
         });
       }).catch((error) => {
         reject(error)
+        loader.style.display = "none";
         Swal.fire({
           icon: 'Error',
           title: 'Oops...',
@@ -287,6 +346,7 @@ const updateUserPassword = (oldP, newP) =>{
         })
       });
     }).catch((error) => {
+      loader.style.display = "none";
       Swal.fire({
         icon: 'Error',
         title: 'Oops...',
@@ -300,6 +360,7 @@ const updateUserPassword = (oldP, newP) =>{
 let updateProfileBtn = document.getElementById('update-profile-btn');
 updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
   try{
+    loader.style.display = "flex";
     let uid = localStorage.getItem('uid');
     let fullName = document.getElementById('signup-name');
     let oldPass = document.getElementById('oldPass');
@@ -318,6 +379,7 @@ updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
     const docSnap = await getDoc(userRef);
     if (docSnap.exists()) {
       await updateDoc(userRef, user);
+      loader.style.display = "none";
       Swal.fire({
         icon: 'Success!',
         title: 'Profile updated successfully.',
@@ -327,6 +389,7 @@ updateProfileBtn && updateProfileBtn.addEventListener('click', async () => {
     }
   }catch(err){
     console.log(err.message)
+    loader.style.display = "none";
   }
 })
 
@@ -343,20 +406,27 @@ let greetbg = document.getElementById('greet');
 let time = new Date().getHours();
 if(location.pathname == '/dashboard.html' || location.pathname == '/blogs.html' || location.pathname == '/user.html'){
   if (time >= 5 && time < 12) {
+    loader.style.display = "flex";
     greetingTime.innerHTML = 'Good Morning Readers';
     greetbg.style.backgroundImage = "url('images/morning.jpg')"
+    loader.style.display = "none";
   } else if (time >= 12 && time < 18) {
+    loader.style.display = "flex";
     greetingTime.innerHTML = 'Good Afternoon Readers';
     greetbg.style.backgroundImage = "url('images/afternoon.jpg')"
+    loader.style.display = "none";
   } else {
+    loader.style.display = "flex";
     greetingTime.innerHTML = 'Good Evening Readers'
     greetbg.style.backgroundImage = "url('images/evening.jpg')"
+    loader.style.display = "none";
   }
 }
 
 
 const submitBlog = async () => {
   try {
+    loader.style.display = "flex";
       let title = document.getElementById("title");
       let blog = document.getElementById('blog');
       const currentUser = auth.currentUser;
@@ -373,12 +443,14 @@ const submitBlog = async () => {
       getCurrentBlogs(currentUser.uid)
       title.value = ""
       blog.value = ''
+      loader.style.display = "none";
       Swal.fire({
         icon: 'Success!',
         title: 'Blog Published Successfully.',
       });
   } catch (err) {
       console.log(err)
+      loader.style.display = "none";
   }
 }
 
@@ -387,8 +459,10 @@ addBlog && addBlog.addEventListener('click', submitBlog);
 
 
 async function delBlog(id) {
+  loader.style.display = "flex";
   const currentUser = auth.currentUser;
   await deleteDoc(doc(db, "blogs", id));
+  loader.style.display = "none";
   Swal.fire({
     icon: 'Success!',
     title: 'Blog Deleted Successfully.',
@@ -397,50 +471,20 @@ async function delBlog(id) {
 }
 
 
-let updateId = "";
-let updatedTitle = document.getElementById('update-title');
-let updatedBlog = document.getElementById('update-blog');
-const editBlog = (id, title, blog) => {
-  updateId = id;
-  updatedTitle.value = title;
-  updatedBlog.value = blog;
-}
-
-if(location.pathname === "/dashboard.html"){
-  let updateModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-  const updateBLogBtn = document.getElementById('updateBlog-btn');
-  updateBLogBtn && updateBLogBtn.addEventListener('click', async () => {
-    const currentUser = auth.currentUser;
-    await updateDoc(doc(db, "blogs", updateId), {
-      title: updatedTitle.value,
-      blog: updatedBlog.value
-    });
-    updateId = '';  
-    updateModal.hide();
-    getCurrentBlogs(currentUser.uid)
-    Swal.fire({
-      icon: 'Success!',
-      title: 'Blog Edited Successfully.',
-    });
-  })
-}
-
-
-
-
 const getUserBlogs =  async() => {
   try{
+    loader.style.display = "flex";
     const urlParams = new URLSearchParams(location.search);
     const user = urlParams.get('user');
     const userBloglist = document.getElementById("userBloglist");
     const userDetails = document.getElementById('userDetails');
     const userRef = doc(db, "users", user); 
     const userData = await getDoc(userRef);
-    userDetails.innerHTML = `<div class="card profile-card w-70 mt-4">
+    userDetails.innerHTML = `<div style="width: 20rem;" class="card profile-card mt-4">
                                <img height="auto" src="${userData.data().picture ? userData.data().picture : "images/user-icon.jpg"}" 
                                class="card-img-top card-pic" alt="profile">
-                               <h5 class="card-title my-card mt-3 color2">${userData.data().fullName}</h5>
-                               <p class="card-text my-card color2">${userData.data().signupEmail}</p>
+                               <h5 class="card-title center mt-3 color2">${userData.data().fullName}</h5>
+                               <p class="card-text center color2">${userData.data().signupEmail}</p>
                              </div> `
     userBloglist.innerHTML = '';
     const q = query(collection(db, "blogs"), where("uid", "==", user));
@@ -456,24 +500,24 @@ const getUserBlogs =  async() => {
             <h4 class="name">${doc.data().user.fullName}</h4>
           </div>
         </div>
-       <div>
-         <h5 class="card-title">${doc.data().title}</h5>
-         <p class="card-text">${doc.data().blog}</p>
-         <p class="card-text time">${doc.data().time.toDate().toDateString()}</p>
-       </div>
+        <div>
+          <h5 class="card-title">${doc.data().title}</h5>
+          <p class="card-text">${doc.data().blog}</p>
+          <p class="card-text time">${doc.data().time.toDate().toDateString()}</p>
+        </div>
       </div> `
     });
+    loader.style.display = "none";
   } catch(error) {
     console.log(error)
+    loader.style.display = "none";
   }
   } 
-
 
 
 if(location.pathname === "/user.html" ){
   getUserBlogs()
 }
-
 
 
 window.delBlog = delBlog;

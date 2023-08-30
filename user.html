@@ -7,11 +7,12 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="bootstrap.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg my-header">
     <div class="container nav-container">
-        <img class="logo" alt="logo" width="40" src="images/download-fotor-202308282259.png" />
+        <img class="logo animate__animated animate__rotateIn" alt="logo" width="40" src="images/download-fotor-202308282259.png" />
         <h4 class="my-heading">Personal Blog<span class="span">ging App</span></h4>
         <button class="navbar-toggler span" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -22,12 +23,12 @@
             <ul class="navbar-nav ms-auto me-auto mb-2 mb-lg-0"> </ul>
             <div id="nav-profile">
               <a class="nav-a" href="profile.html">
-                <img id="user-profile" src="images/chat-users.png" class="users-photo" width="40" height="40" alt=""  />
+                <img id="user-profile" src="images/chat-users.png" class="users-photo animate__animated animate__bounce" width="40" height="40" alt=""  />
               </a>
             </div>
             <div> 
-              <a class="btn btn-outline-warning mb-3 mt-3" href="blogs.html">Blogs</a>
-              <a id="logout-btn" class="btn btn-outline-warning mb-3 mt-3" href="login.html">Log Out</a>
+              <a class="btn btn-outline-warning mb-3 mt-3 animate__animated animate__bounce" href="blogs.html">Blogs</a>
+              <a id="logout-btn" class="btn btn-outline-warning mb-3 mt-3 animate__animated animate__bounce" href="login.html">Log Out</a>
             </div>
         </div>
     </div>
@@ -36,22 +37,31 @@
     <h4 id="time" class="pt-3 pb-3 mt-2"></h4>
   </div> 
   <br />
-  <div id="dashboard" class="container-xxl dashboard">
-    <div class="headings">
+  <div id="dashboard" class="container-xxl dashboard mb-5">
+    <div class="headings mt-2">
       <div><h4 class="auth users-heading"> Blogs & Profile</h4></div>
     </div>
     <div class="row">
-      <div id="userDetails" class="col-12 col-sm-6 col-md-6 col-lg-6 w-70">
-            
-      </div>
-      <div class="col-12 col-sm-6 col-md-6 col-lg-6">
-        <br>
-        <div id="userBloglist">
+      <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+        <div id="loader" class="text-center spinner-container">
+          <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <div class="center" id="userDetails">
 
         </div>
       </div>
-    </div>      
-  </div>
+    </div>
+    <div class="row"> 
+      <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+        <br>
+        <div class="my-card" id="userBloglist">
+
+        </div>
+       </div>  
+    </div>
+  </div>  
   <br />
   <div class="copyright mt-5">
      <span><span class="span">Copyright © 2023 by </span><img width="19" src="images/download-fotor-202308282259.png" class="logo" alt="logo" /> Personal Blogging App</span>
